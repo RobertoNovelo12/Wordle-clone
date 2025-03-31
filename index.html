@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Clone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/gameLogic.js" type="module" defer></script>
+    <script src="js/main.js" type="module" defer></script>
+
+</head>
+<body class="loading">
+    
+    <button id="help-button" class="help-button">
+        <img src="images/help-icon.svg" alt="Cómo jugar" width="24" height="24">
+    </button>
+    
+    
+    <div class="controls">
+        
+        <button id="hint-button" class="control-button" title="Pista (te quedan 2)">
+            <img src="images/hint-icon.svg" alt="Obtener pista" width="24" height="24">
+        </button>
+        
+        
+        <button id="reload-button" class="control-button">
+            <img src="images/reload-icon.svg" alt="Nuevo juego" width="24" height="24">
+        </button>
+        
+        
+        <button id="theme-toggle" class="control-button">
+            <img id="theme-icon" src="images/moon-icon.svg" alt="Cambiar tema" width="24" height="24">
+        </button>
+    </div>
+    
+    
+    <div class="container">
+        <h1>Wordle Clone</h1>
+        
+        
+        <div id="notification-container" class="notification-hidden">
+            <p id="notification-message"></p>
+            <button id="notification-button" class="notification-btn">Nuevo juego</button>
+        </div>
+        
+        
+        <div class="board"></div>
+        
+        
+        <div class="keyboard"></div>
+    </div>
+    
+    
+    <div class="github-footer">
+        <a href="https://github.com/RobertoNovelo12" target="_blank" rel="noopener noreferrer">
+            <img src="images/github-icon.svg" alt="GitHub" class="github-icon">
+            <span>RobertoNovelo12</span>
+        </a>
+    </div>
+</body>
+</html>
