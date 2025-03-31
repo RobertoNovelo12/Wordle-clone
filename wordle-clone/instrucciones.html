@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cómo jugar Wordle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s;
+        }
+        
+        body.light-mode {
+            background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
+            color: #333;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 60px; 
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 5px;  
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 1px 3px black;
+            display: flex; 
+            align-items: center;
+            gap: 8px; 
+            transition: all 0.3s ease; 
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);  
+            transform: scale(1.05);  
+        }
+
+        
+        .back-button img {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .dark-mode .back-button img {
+            filter: invert(1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        
+        .instruction-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .light-mode .instruction-section {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .instruction-section {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h2 {
+            margin-bottom: 15px;
+            color: #fbc02d;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .example {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .example-cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .light-mode .example-cell {
+            border: 2px solid #333;
+        }
+        
+        .dark-mode .example-cell {
+            border: 2px solid white;
+        }
+        
+        .correct-example {
+            background-color: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+        
+        .misplaced-example {
+            background-color: #fbc02d;
+            border-color: #fbc02d;
+            color: white;
+        }
+        
+        .wrong-example {
+            background-color: #616161;
+            opacity: 0.6;
+            color: white;
+        }
+        
+        
+        .github-footer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+        }
+
+    .github-footer a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: var(--color-text-light);
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 8px 12px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 1px 3px black;
+    }
+
+    .github-footer a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+    }
+        
+        .github-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .dark-mode .github-icon {
+            filter: invert(1);
+        }
+        
+        
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .control-button img {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .dark-mode .control-button img {
+            filter: invert(1);
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .example-cell {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+            .github-footer a span {
+            display: none;
+            }
+            
+            .github-footer a {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <a href="index.html" class="back-button">
+        <img src="images/back-icon.svg" alt="Volver al juego">
+    </a>
+    
+    
+    <div class="controls">
+        
+        <button id="theme-toggle" class="control-button">
+            <img id="theme-icon" src="images/moon-icon.svg" alt="Cambiar tema" width="24" height="24">
+        </button>
+    </div>
+    
+    <div class="container">
+        <h1>Cómo jugar Wordle</h1>
+        
+        <div class="instruction-section">
+            <h2>Objetivo del juego</h2>
+            <p>Adivina la palabra oculta en 6 intentos o menos.</p>
+            <p>Cada intento debe ser una palabra válida del diccionario.</p>
+        </div>
+        
+        <div class="instruction-section">
+            <h2>Instrucciones básicas</h2>
+            <p>1. Escribe una palabra de 5 letras y presiona Enter</p>
+            <p>2. Las letras cambiarán de color para indicar qué tan cerca estás de la palabra correcta</p>
+        </div>
+        
+        <div class="instruction-section">
+            <h2>Significado de los colores</h2>
+            
+            <div class="example">
+                <div class="example-cell correct-example">A</div>
+                <div class="example-cell">M</div>
+                <div class="example-cell">O</div>
+                <div class="example-cell">R</div>
+                <div class="example-cell">E</div>
+            </div>
+            <p><strong>Verde:</strong> La letra A está en la palabra y en la posición correcta.</p>
+            
+            <div class="example">
+                <div class="example-cell">P</div>
+                <div class="example-cell misplaced-example">E</div>
+                <div class="example-cell">R</div>
+                <div class="example-cell">R</div>
+                <div class="example-cell">O</div>
+            </div>
+            <p><strong>Amarillo:</strong> La letra E está en la palabra pero en otra posición.</p>
+            
+            <div class="example">
+                <div class="example-cell">C</div>
+                <div class="example-cell">A</div>
+                <div class="example-cell">S</div>
+                <div class="example-cell">A</div>
+                <div class="example-cell wrong-example">Z</div>
+            </div>
+            <p><strong>Gris:</strong> La letra Z no está en la palabra.</p>
+        </div>
+        
+        <div class="instruction-section">
+            <h2>Consejos</h2>
+            <p>• Comienza con palabras que contengan muchas vocales</p>
+            <p>• Usa las letras correctas en nuevos intentos</p>
+            <p>• Presta atención a las letras que no están en la palabra</p>
+            <p>• ¡Diviértete y desafía a tus amigos!</p>
+        </div>
+    </div>
+    
+    
+    <div class="github-footer">
+        <a href="https://github.com/RobertoNovelo12" target="_blank" rel="noopener noreferrer">
+            <img src="images/github-icon.svg" alt="GitHub" class="github-icon">
+            <span>RobertoNovelo12</span>
+        </a>
+    </div>
+    
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const body = document.body;
+            
+            // Cargar tema guardado
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialTheme = savedTheme ? savedTheme === "dark" : systemPrefersDark;
+            
+            // Aplicar tema inicial
+            if (initialTheme) {
+                body.classList.add('dark-mode');
+                body.classList.remove('light-mode');
+                themeIcon.src = "images/sun-icon.svg";
+                themeIcon.alt = "Cambiar a modo claro";
+            } else {
+                body.classList.add('light-mode');
+                body.classList.remove('dark-mode');
+                themeIcon.src = "images/moon-icon.svg";
+                themeIcon.alt = "Cambiar a modo oscuro";
+            }
+            
+            // Escuchar cambios en el botón de tema
+            themeToggle.addEventListener('click', () => {
+                const isDarkMode = body.classList.contains('dark-mode');
+                
+                if (isDarkMode) {
+                    body.classList.remove('dark-mode');
+                    body.classList.add('light-mode');
+                    themeIcon.src = "images/moon-icon.svg";
+                    themeIcon.alt = "Cambiar a modo oscuro";
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    body.classList.remove('light-mode');
+                    body.classList.add('dark-mode');
+                    themeIcon.src = "images/sun-icon.svg";
+                    themeIcon.alt = "Cambiar a modo claro";
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+            
+            // Escuchar cambios en las preferencias del sistema
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('theme')) {
+                    if (e.matches) {
+                        body.classList.add('dark-mode');
+                        body.classList.remove('light-mode');
+                        themeIcon.src = "images/sun-icon.svg";
+                    } else {
+                        body.classList.add('light-mode');
+                        body.classList.remove('dark-mode');
+                        themeIcon.src = "images/moon-icon.svg";
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

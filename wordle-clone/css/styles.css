@@ -1,0 +1,573 @@
+/* ================================
+   ESTILOS BASE Y VARIABLES
+   ================================ */
+   :root {
+    --color-primary: #1e3c72;
+    --color-secondary: #2a5298;
+    --color-correct: #4caf50;
+    --color-misplaced: #fbc02d;
+    --color-wrong: #616161;
+    --color-text-light: #ffffff;
+    --color-text-dark: #333333;
+    --color-bg-light: #f5f7fa;
+    --color-bg-secondary-light: #c3cfe2;
+    --cell-size: 60px;
+    --cell-size-mobile: 40px;
+    --key-size: 50px;
+    --key-size-mobile: 40px;
+    --color-bg-notification: var(--color-primary); 
+    --color-text-notification: var(--color-text-light); 
+    --color-border-notification: rgba(255, 255, 255, 0.1); 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ================================
+   ESTILOS GENERALES DEL JUEGO
+   ================================ */
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+body.loading {
+    background-color: #f5f7fa; 
+    color: #333;
+}
+
+body.loading.dark-mode {
+    background-color: #1e3c72;
+    color: white;
+}
+
+body.light-mode {
+    background: linear-gradient(135deg, var(--color-bg-light), var(--color-bg-secondary-light));
+    color: var(--color-text-dark);
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    padding: 15px;
+    position: relative;
+}
+
+/* ================================
+   ESTILOS DEL TABLERO
+   ================================ */
+   .board {
+    display: grid;
+    gap: 6px;
+    margin: 0 auto 20px;
+    justify-content: center;
+    width: fit-content;
+    grid-template-columns: repeat(var(--word-length), minmax(40px, var(--cell-size)));
+    overflow: hidden;  
+}
+
+.cell {
+    position: relative;
+    aspect-ratio: 1/1;
+    width: 100%;
+    max-width: var(--cell-size);
+    min-width: 40px;
+    border: 2px solid var(--color-text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    cursor: pointer;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+.cell.selected {
+    transform: scale(1.05);
+    z-index: 1; 
+}
+
+body.light-mode .cell {
+    border-color: var(--color-text-dark);
+}
+
+body.light-mode .cell.selected {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+.cell.correct {
+    background-color: var(--color-correct) !important;
+    border-color: var(--color-correct) !important;
+    color: var(--color-text-light);
+}
+
+.cell.misplaced {
+    background-color: var(--color-misplaced) !important;
+    border-color: var(--color-misplaced) !important;
+    color: var(--color-text-light);
+}
+
+.cell.wrong {
+    background-color: var(--color-wrong) !important;
+    opacity: 0.6;
+    color: var(--color-text-light);
+}
+
+.cell[data-state="hint"] {
+    background-color: transparent;
+    color: inherit;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* ================================
+   ESTILOS DEL TECLADO
+   ================================ */
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    max-width: 500px;
+    padding: 0 5px;
+    margin: 0 auto;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.keyboard button {
+    height: var(--key-size);
+    min-width: 30px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--color-text-light);
+    font-weight: bold;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    font-size: clamp(14px, 3.5vw, 18px);
+    padding: 0 2px;
+    overflow: hidden;
+}
+
+.keyboard button:hover {
+    transform: scale(1.05);
+}
+
+
+.enter-key, .delete-key {
+    flex: 2 1 auto;
+    min-width: 50px;
+    font-size: clamp(12px, 3vw, 16px);
+    padding: 0 8px;
+    white-space: nowrap;
+}
+
+
+.keyboard button.correct {
+    background-color: var(--color-correct) !important;
+    color: var(--color-text-light) !important;
+}
+
+.keyboard button.misplaced {
+    background-color: var(--color-misplaced) !important;
+    color: var(--color-text-light) !important;
+}
+
+.keyboard button.wrong {
+    background-color: var(--color-wrong) !important;
+    color: var(--color-text-light) !important;
+    opacity: 0.6;
+}
+
+/* ================================
+   COMPONENTES DE INTERFAZ
+   ================================ */
+
+#notification-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 90%;
+    width: 300px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: var(--color-text-light);
+    display: block; 
+}
+
+
+.light-mode #notification-container {
+    --color-bg-notification: var(--color-primary);
+    --color-text-notification: var(--color-text-light);
+    --color-border-notification: rgba(255, 255, 255, 0.3);
+}
+
+
+.dark-mode #notification-container {
+    --color-bg-notification: var(--color-secondary);
+    --color-text-notification: var(--color-text-light);
+    --color-border-notification: rgba(0, 0, 0, 0.3);
+}
+
+.notification-visible {
+    opacity: 1 !important;
+}
+
+.notification-hidden {
+    opacity: 0;
+    pointer-events: none; 
+}
+
+
+.notification-win {
+    background: var(--color-correct);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.notification-lose {
+    background: var(--color-wrong);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+
+
+.notification-btn {
+    background: var(--color-primary);
+    color: var(--color-text-light);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.notification-btn:hover {
+    background: var(--color-secondary);
+}
+
+body.light-mode {
+    background-color: #f8f9fa;
+    color: var(--color-text-dark);
+    border: 1px solid #ddd;
+}
+
+.controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.control-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    transition: transform 0.3s;
+}
+
+.control-button:hover {
+    transform: scale(1.1);
+}
+
+.control-button img {
+    width: 24px;
+    height: 24px;
+    filter: invert(0.8);
+}
+
+body.light-mode .control-button img {
+    filter: invert(0.3);
+}
+
+
+.help-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 8px;
+    transition: transform 0.3s;
+}
+
+.help-button:hover {
+    transform: scale(1.1);
+}
+
+.help-button img {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+}
+
+body.light-mode .help-button img {
+    filter: invert(0.3);
+}
+
+
+.github-footer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+.github-footer a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--color-text-light);
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 1px 3px black;
+}
+
+.game-container.disabled {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.key:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+body.light-mode .github-footer a {
+    color: var(--color-text-dark);
+}
+
+.github-footer a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+body.light-mode .github-footer a:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.github-icon {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+}
+
+body.light-mode .github-icon {
+    filter: invert(0.3);
+}
+
+/* ================================
+   MODO CLARO (Por defecto)
+   ================================ */
+   body {
+    background: linear-gradient(135deg, var(--color-bg-light), var(--color-bg-secondary-light));
+    color: var(--color-text-dark);
+}
+
+.light-mode {
+    background: linear-gradient(135deg, var(--color-bg-light), var(--color-bg-secondary-light));
+    color: var(--color-text-dark);
+}
+
+.light-mode .cell {
+    border-color: var(--color-text-dark);
+}
+
+.light-mode .cell.selected {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .keyboard button {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--color-text-dark);
+}
+
+.light-mode .keyboard button:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.light-mode {
+    background-color: #ffffff;
+    color: var(--color-text-dark);
+    border: 1px solid #ddd;
+}
+
+.light-mode .github-footer a {
+    color: var(--color-text-dark);
+}
+
+.light-mode .github-footer a:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .github-icon,
+.light-mode .control-button img,
+.light-mode .help-button img {
+    filter: invert(0.3);
+}
+
+/* ================================
+   MODO OSCURO
+   ================================ */
+.dark-mode {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #ffffff;
+}
+
+body.dark-mode {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+}
+
+.dark-mode .board {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+}
+
+.dark-mode .cell {
+    background-color: #2a5298;
+    border-color: #bbb;
+    color: #fff;
+}
+
+.dark-mode .keyboard button {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--color-text-light);
+}
+
+.dark-mode .keyboard button:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.dark-mode {
+    background-color: #333;
+    color: white;
+}
+
+.dark-mode .github-footer a {
+    color: var(--color-text-light);
+}
+
+.dark-mode .github-footer a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .github-icon,
+.dark-mode .control-button img,
+.dark-mode .help-button img {
+    filter: invert(1);
+}
+
+
+/* ================================
+   MEDIA QUERIES PARA RESPONSIVIDAD
+   ================================ */
+@media (max-width: 768px) {
+    .cell {
+        max-width: var(--cell-size-mobile);
+        font-size: 1.5rem;
+    }
+    
+    .keyboard button {
+        height: var(--key-size-mobile);
+        min-width: 25px;
+    }
+    
+    .enter-key, .delete-key {
+        min-width: 45px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .board {
+        gap: 4px;
+    }
+    
+    .cell {
+        font-size: 1.3rem;
+    }
+    
+    .github-footer a span {
+        display: none;
+    }
+    
+    .github-footer a {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    body {
+        padding: 10px 5px;
+    }
+    
+    .cell {
+        font-size: 1.1rem;
+        min-width: 35px;
+    }
+    
+    .keyboard button {
+        height: 38px;
+        min-width: 20px;
+    }
+    
+    .enter-key, .delete-key {
+        min-width: 40px;
+        font-size: 0.8rem;
+    }
+    
+    .controls, .help-button {
+        top: 10px;
+    }
+    
+    .controls {
+        right: 10px;
+    }
+}
