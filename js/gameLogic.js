@@ -51,7 +51,6 @@ export class WordleGame {
         this.keyboardManager.addKeyboardListeners(this.handleVirtualKeyboard.bind(this));
         this.setupEventListeners();
 
-
         document.getElementById('hint-button').addEventListener('click', () => this.provideHint());
         document.getElementById('reload-button').addEventListener('click', () => this.startNewGame());
     }
@@ -62,7 +61,7 @@ export class WordleGame {
 
     setupEventListeners() {
         document.addEventListener('keydown', this.keyboardHandlerBound); 
-    this.boardManager.boardElement.addEventListener('click', this.handleBoardClick.bind(this));
+        this.boardManager.boardElement.addEventListener('click', this.handleBoardClick.bind(this));
     }
 
     handleVirtualKeyboard(key) {
@@ -70,7 +69,7 @@ export class WordleGame {
             this.checkWord();
         } else if (key === "Backspace" || key === "←") {
             this.handleBackspace();
-        } else if (/^[A-Za-z]$/.test(key)) {
+        } else if (/^[A-Za-zÑ]$/.test(key)) { 
             this.handleLetterInput(key);
         }
     }
@@ -90,47 +89,29 @@ export class WordleGame {
     }
 
     handleBackspace() {
-
         if (this.currentGuess.length > 0) {
             const wasDeleted = this.boardManager.deleteLastLetter();
             if (wasDeleted) {
-
                 this.currentGuess = this.boardManager.getCurrentGuessFromBoard(this.rowIndex);
             }
         }
     }
 
-
     disableGame() {
-
         document.removeEventListener('keydown', this.keyboardHandlerBound);
-        
-
         this.keyboardManager.disableKeyboard();
-        
-
         this.boardManager.boardElement.style.pointerEvents = 'none';
-        
-
         document.querySelector('.container').classList.add('disabled');
     }
 
     enableGame() {
-
         document.addEventListener('keydown', this.keyboardHandlerBound);
-    
-
         this.keyboardManager.enableKeyboard();
-    
-
         this.boardManager.boardElement.style.pointerEvents = 'auto';
         document.querySelector('.container').classList.remove('disabled');
-    
-
         const overlay = document.getElementById('blocking-overlay');
         if (overlay) overlay.remove();
     }    
-
 
     disableKeyboard() {
         document.querySelectorAll('.key').forEach(key => {
@@ -148,8 +129,6 @@ export class WordleGame {
             key.style.opacity = '1';
             key.classList.remove('disabled-key');
         });
-        
-
         this.keyboardElement.replaceWith(this.keyboardElement.cloneNode(true));
     }
 
@@ -179,7 +158,6 @@ export class WordleGame {
         }
     }
   
-
     showGameOverNotification(isWin) {
         const notification = document.getElementById('notification-container');
         const message = document.getElementById('notification-message');
@@ -196,10 +174,8 @@ export class WordleGame {
             notification.classList.add('notification-lose');
         }
         
-
         button.textContent = "Nuevo juego";
         
-
         return new Promise((resolve) => {
             button.onclick = () => {
                 notification.classList.remove('notification-visible');
@@ -226,29 +202,23 @@ export class WordleGame {
     }
 
     async startNewGame() {
-
         const notification = document.getElementById('notification-container');
         notification.classList.remove('notification-visible');
         notification.classList.add('notification-hidden');
         
-
         this.targetWord = this.getRandomWord();
         this.hintUsed = 0;
         this.rowIndex = 0;
         this.currentGuess = "";
         
-
         this.enableGame();
         
-
         this.boardManager.resetBoard(this.targetWord);
         this.keyboardManager.resetKeyboard();
         this.keyboardManager.enableKeyboard();
         
-
         document.getElementById('hint-button').title = "Pista (te quedan 2)";
         
-
         this.boardManager.selectFirstEmptyCell();
     }
 }

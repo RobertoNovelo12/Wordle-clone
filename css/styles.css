@@ -1,23 +1,57 @@
 /* ================================
-   ESTILOS BASE Y VARIABLES
+   VARIABLES GLOBALES
    ================================ */
    :root {
+    
     --color-primary: #1e3c72;
     --color-secondary: #2a5298;
     --color-correct: #4caf50;
     --color-misplaced: #fbc02d;
     --color-wrong: #616161;
-    --color-text-light: #ffffff;
-    --color-text-dark: #333333;
-    --color-bg-light: #f5f7fa;
-    --color-bg-secondary-light: #c3cfe2;
+    
+    
     --cell-size: 60px;
     --cell-size-mobile: 40px;
     --key-size: 50px;
     --key-size-mobile: 40px;
+    
+    
     --color-bg-notification: var(--color-primary); 
-    --color-text-notification: var(--color-text-light); 
     --color-border-notification: rgba(255, 255, 255, 0.1); 
+}
+
+
+:root, .light {
+    --color-bg-primary: #f5f7fa;
+    --color-bg-secondary: #c3cfe2;
+    --color-text-primary: #333333;  
+    --color-text-secondary: #1e3c72;
+    --color-border: rgba(0, 0, 0, 0.1);
+    --color-key-bg: rgba(0, 0, 0, 0.1);
+    --color-key-hover: rgba(0, 0, 0, 0.3);
+    --icon-filter: invert(0.3);
+    
+    
+    --color-text-light: #ffffff;    
+    --color-text-dark: var(--color-text-primary); 
+    --color-bg-light: var(--color-bg-primary);
+    --color-bg-secondary-light: var(--color-bg-secondary);
+}
+
+
+.dark {
+    --color-bg-primary: #1a1a2e;
+    --color-bg-secondary: #16213e;
+    --color-text-primary: #ffffff;  
+    --color-text-secondary: #a8c0ff;
+    --color-border: rgba(255, 255, 255, 0.3);
+    --color-key-bg: rgba(140, 27, 27, 0.1);
+    --color-key-hover: rgba(255, 255, 255, 0.2);
+    --icon-filter: invert(1);
+    
+    
+    --color-text-light: var(--color-text-primary);
+    --color-text-dark: #333333;     
 }
 
 * {
@@ -30,28 +64,14 @@
 /* ================================
    ESTILOS GENERALES DEL JUEGO
    ================================ */
-body {
+   body {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-}
-
-body.loading {
-    background-color: #f5f7fa; 
-    color: #333;
-}
-
-body.loading.dark-mode {
-    background-color: #1e3c72;
-    color: white;
-}
-
-body.light-mode {
-    background: linear-gradient(135deg, var(--color-bg-light), var(--color-bg-secondary-light));
-    color: var(--color-text-dark);
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -63,6 +83,88 @@ body.light-mode {
     margin: 0 auto;
     padding: 15px;
     position: relative;
+}
+
+
+body {
+    background: linear-gradient(135deg, var(--color-bg-primary), var(--color-bg-secondary));
+    color: var(--color-text-primary);
+}
+
+.cell {
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+.keyboard button {
+    background: var(--color-key-bg);
+    color: var(--color-text-primary);
+}
+
+.keyboard button:hover {
+    background: var(--color-key-hover);
+}
+
+.control-button img,
+.help-button img,
+.github-icon {
+    filter: var(--icon-filter);
+}
+
+
+.cell.correct,
+.cell.misplaced,
+.cell.wrong,
+.keyboard button.correct,
+.keyboard button.misplaced,
+.keyboard button.wrong {
+    color: white !important;
+}
+
+
+.light .cell {
+    border-color: var(--color-text-dark) !important;
+    background-color: white !important;
+    color: var(--color-text-dark) !important;
+}
+
+
+.light .keyboard button {
+    color: var(--color-text-dark) !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+.light .keyboard button:hover {
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+
+.light .control-button img,
+.light .help-button img,
+.light .github-icon {
+    filter: invert(0.4) !important;
+}
+
+
+.light .github-footer a {
+    color: var(--color-text-dark) !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+.light .github-footer a:hover {
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+
+.light h1,
+.light .container {
+    color: var(--color-text-dark) !important;
+}
+
+
+.light #notification-container {
+    background: var(--color-primary) !important;
+    color: white !important; 
 }
 
 /* ================================
@@ -102,31 +204,21 @@ body.light-mode {
     z-index: 1; 
 }
 
-body.light-mode .cell {
-    border-color: var(--color-text-dark);
-}
-
-body.light-mode .cell.selected {
-    background-color: rgba(0, 0, 0, 0.1);
-}
 
 
 .cell.correct {
     background-color: var(--color-correct) !important;
     border-color: var(--color-correct) !important;
-    color: var(--color-text-light);
 }
 
 .cell.misplaced {
     background-color: var(--color-misplaced) !important;
     border-color: var(--color-misplaced) !important;
-    color: var(--color-text-light);
 }
 
 .cell.wrong {
     background-color: var(--color-wrong) !important;
     opacity: 0.6;
-    color: var(--color-text-light);
 }
 
 .cell[data-state="hint"] {
@@ -139,72 +231,72 @@ body.light-mode .cell.selected {
 /* ================================
    ESTILOS DEL TECLADO
    ================================ */
-.keyboard {
+   .keyboard {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
     max-width: 500px;
-    padding: 0 5px;
-    margin: 0 auto;
+    padding: 0 8px;
+    margin: 20px auto 0;
 }
 
 .keyboard-row {
     display: flex;
     justify-content: center;
-    gap: 4px;
+    gap: 5px;
     width: 100%;
 }
 
 .keyboard button {
     height: var(--key-size);
-    min-width: 30px;
+    min-width: 35px;
     border: none;
     background: rgba(255, 255, 255, 0.2);
     color: var(--color-text-light);
-    font-weight: bold;
-    border-radius: 4px;
+    font-weight: 600;
+    border-radius: 6px;
     transition: all 0.2s ease;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex: 1 1 auto;
-    font-size: clamp(14px, 3.5vw, 18px);
-    padding: 0 2px;
-    overflow: hidden;
+    font-size: clamp(16px, 3.5vw, 20px);
+    padding: 0 4px;
 }
 
 .keyboard button:hover {
     transform: scale(1.05);
 }
 
+.keyboard button:active {
+    transform: scale(0.95);
+}
 
-.enter-key, .delete-key {
+.keyboard button[data-action="enter"],
+.keyboard button[data-action="backspace"] {
     flex: 2 1 auto;
-    min-width: 50px;
-    font-size: clamp(12px, 3vw, 16px);
-    padding: 0 8px;
-    white-space: nowrap;
+    min-width: 70px;
+    font-size: clamp(14px, 3vw, 16px);
+    padding: 0 10px;
 }
 
 
 .keyboard button.correct {
     background-color: var(--color-correct) !important;
-    color: var(--color-text-light) !important;
 }
 
 .keyboard button.misplaced {
     background-color: var(--color-misplaced) !important;
-    color: var(--color-text-light) !important;
 }
 
 .keyboard button.wrong {
     background-color: var(--color-wrong) !important;
-    color: var(--color-text-light) !important;
-    opacity: 0.6;
+    opacity: 0.8;
 }
+
 
 /* ================================
    COMPONENTES DE INTERFAZ
@@ -279,12 +371,6 @@ body.light-mode .cell.selected {
     background: var(--color-secondary);
 }
 
-body.light-mode {
-    background-color: #f8f9fa;
-    color: var(--color-text-dark);
-    border: 1px solid #ddd;
-}
-
 .controls {
     position: fixed;
     top: 20px;
@@ -312,10 +398,6 @@ body.light-mode {
     filter: invert(0.8);
 }
 
-body.light-mode .control-button img {
-    filter: invert(0.3);
-}
-
 
 .help-button {
     position: fixed;
@@ -337,10 +419,6 @@ body.light-mode .control-button img {
     width: 24px;
     height: 24px;
     filter: invert(1);
-}
-
-body.light-mode .help-button img {
-    filter: invert(0.3);
 }
 
 
@@ -378,17 +456,9 @@ body.light-mode .help-button img {
     opacity: 0.5;
 }
 
-body.light-mode .github-footer a {
-    color: var(--color-text-dark);
-}
-
 .github-footer a:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: scale(1.05);
-}
-
-body.light-mode .github-footer a:hover {
-    background: rgba(0, 0, 0, 0.1);
 }
 
 .github-icon {
@@ -396,112 +466,6 @@ body.light-mode .github-footer a:hover {
     height: 24px;
     filter: invert(1);
 }
-
-body.light-mode .github-icon {
-    filter: invert(0.3);
-}
-
-/* ================================
-   MODO CLARO (Por defecto)
-   ================================ */
-   body {
-    background: linear-gradient(135deg, var(--color-bg-light), var(--color-bg-secondary-light));
-    color: var(--color-text-dark);
-}
-
-.light-mode {
-    background: linear-gradient(135deg, var(--color-bg-light), var(--color-bg-secondary-light));
-    color: var(--color-text-dark);
-}
-
-.light-mode .cell {
-    border-color: var(--color-text-dark);
-}
-
-.light-mode .cell.selected {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-.light-mode .keyboard button {
-    background: rgba(0, 0, 0, 0.1);
-    color: var(--color-text-dark);
-}
-
-.light-mode .keyboard button:hover {
-    background: rgba(0, 0, 0, 0.3);
-}
-
-.light-mode {
-    background-color: #ffffff;
-    color: var(--color-text-dark);
-    border: 1px solid #ddd;
-}
-
-.light-mode .github-footer a {
-    color: var(--color-text-dark);
-}
-
-.light-mode .github-footer a:hover {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-.light-mode .github-icon,
-.light-mode .control-button img,
-.light-mode .help-button img {
-    filter: invert(0.3);
-}
-
-/* ================================
-   MODO OSCURO
-   ================================ */
-.dark-mode {
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    color: #ffffff;
-}
-
-body.dark-mode {
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-}
-
-.dark-mode .board {
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-}
-
-.dark-mode .cell {
-    background-color: #2a5298;
-    border-color: #bbb;
-    color: #fff;
-}
-
-.dark-mode .keyboard button {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--color-text-light);
-}
-
-.dark-mode .keyboard button:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-.dark-mode {
-    background-color: #333;
-    color: white;
-}
-
-.dark-mode .github-footer a {
-    color: var(--color-text-light);
-}
-
-.dark-mode .github-footer a:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.dark-mode .github-icon,
-.dark-mode .control-button img,
-.dark-mode .help-button img {
-    filter: invert(1);
-}
-
-
 /* ================================
    MEDIA QUERIES PARA RESPONSIVIDAD
    ================================ */
@@ -512,16 +476,28 @@ body.dark-mode {
     }
     
     .keyboard button {
-        height: var(--key-size-mobile);
-        min-width: 25px;
+        height: 50px;
+        min-width: 30px;
+        font-size: 18px;
     }
-    
-    .enter-key, .delete-key {
-        min-width: 45px;
+
+    .keyboard-row {
+        gap: 5px; 
+    }
+
+    .keyboard button[data-action="enter"],
+    .keyboard button[data-action="backspace"] {
+        min-width: 50px;
+        font-size: 15px;
     }
 }
 
 @media (max-width: 600px) {
+
+    .enter-key, .delete-key {
+        min-width: 50px;
+        padding: 0 8px;
+    }
     .container {
         padding: 10px;
     }
@@ -551,6 +527,11 @@ body.dark-mode {
     .cell {
         font-size: 1.1rem;
         min-width: 35px;
+    }
+
+    .keyboard {
+        padding: 0 2px;
+        gap: 4px;
     }
     
     .keyboard button {

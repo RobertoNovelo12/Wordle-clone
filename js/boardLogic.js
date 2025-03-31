@@ -44,7 +44,7 @@ export class BoardManager {
 
     insertLetter(letter) {
         const now = Date.now();
-        if (now - this.lastKeyPressTime < 100) return false; 
+        if (now - this.lastKeyPressTime < 100) return false;
         
         this.lastKeyPressTime = now;
 
@@ -53,7 +53,10 @@ export class BoardManager {
         }
 
         if (this.selectedCell && !this.selectedCell.textContent) {
+            
             this.selectedCell.textContent = letter;
+            this.selectedCell.dataset.letter = letter; 
+            
             this.selectNextEmptyCell();
             return true;
         }
@@ -66,7 +69,6 @@ export class BoardManager {
         const currentCol = parseInt(this.selectedCell.dataset.col);
         const rowCells = this.getCurrentRowCells();
 
-
         for (let i = currentCol + 1; i < rowCells.length; i++) {
             const nextCell = rowCells[i];
             if (!nextCell.textContent && nextCell.dataset.state !== 'hint') {
@@ -76,8 +78,6 @@ export class BoardManager {
                 return;
             }
         }
-
-
     }
 
     deleteLastLetter() {
@@ -135,27 +135,37 @@ export class BoardManager {
         this.rowIndex = rowIndex;
 
         if (currentGuess.length < this.targetWord.length) {
-            return { valid: false }; 
+            return { valid: false };
         }
 
         const rowCells = this.getCurrentRowCells();
         let tempTarget = this.targetWord.split('');
         const letterStates = {};
 
+        
         currentGuess.split('').forEach((letter, index) => {
-            if (letter === tempTarget[index]) {
+            const cellLetter = rowCells[index].textContent;
+            const targetLetter = tempTarget[index];
+            
+            if (cellLetter === targetLetter) {
                 rowCells[index].dataset.state = 'correct';
                 tempTarget[index] = null;
                 letterStates[letter] = 'correct';
             }
         });
 
+        
         currentGuess.split('').forEach((letter, index) => {
             if (rowCells[index].dataset.state === 'correct') return;
 
-            if (tempTarget.includes(letter)) {
+            const cellLetter = rowCells[index].textContent;
+            const targetIndex = tempTarget.findIndex(
+                (targetLetter, i) => targetLetter && targetLetter === cellLetter
+            );
+
+            if (targetIndex !== -1) {
                 rowCells[index].dataset.state = 'misplaced';
-                tempTarget[tempTarget.indexOf(letter)] = null;
+                tempTarget[targetIndex] = null;
                 if (!letterStates[letter] || letterStates[letter] !== 'correct') {
                     letterStates[letter] = 'misplaced';
                 }
@@ -176,7 +186,7 @@ export class BoardManager {
             valid: true,
             isCorrect,
             letterStates,
-            gameOver: isCorrect || rowIndex >= this.maxAttempts - 1
+            gameOver
         };
     }
 
