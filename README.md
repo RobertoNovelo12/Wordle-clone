@@ -4,7 +4,7 @@
 
 ## ✨ Características principales
 
-- 🔤 **Adivina palabras de 5 letras**
+- 🔤 **Adivina palabras alestorias**
 - 🎨 **Modo claro/oscuro configurable**
 - 🆘 **Sistema de pistas** (hasta 2 por partida)
 - ⌨️ **Compatible con teclado físico y virtual**
@@ -34,7 +34,7 @@
 
 Clona este repositorio y ejecútalo localmente:
 
-```bash
+```
 git clone https://github.com/RobertoNovelo12/Wordle-clone.git
 cd Wordle-clone
 
